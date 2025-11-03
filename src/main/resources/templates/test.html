@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>测试页面</title>
+</head>
+<body>
+<h1>测试页面</h1>
+<p>如果这个页面能显示，说明 Thymeleaf 工作正常</p>
+<p>当前时间: <span th:text="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd HH:mm:ss')}">时间</span></p>
+</body>
+</html>

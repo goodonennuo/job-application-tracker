@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>IT岗位求职记录系统 - 岗位列表</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .header {
+            background-color: #343a40;
+            color: white;
+            padding: 1rem;
+            margin-bottom: 2rem;
+        }
+        .footer {
+            margin-top: 2rem;
+            padding: 1rem;
+            background-color: #f1f1f1;
+            text-align: center;
+        }
+        .student-info {
+            float: right;
+            font-size: 0.9rem;
+        }
+        .modal-header {
+            background-color: #343a40;
+            color: white;
+        }
+        .modal-header .close {
+            color: white;
+        }
+        .debug-info {
+            background-color: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+<div class="header">
+    <div class="container">
+        <h1>IT岗位求职记录系统</h1>
+        <div class="student-info">
+            <span th:text="'姓名：' + ${studentName}">姓名：郝一诺</span> |
+            <span th:text="'班级：' + ${studentClass}">班级：信2305-3</span>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+<!--    &lt;!&ndash; 调试信息区域 &ndash;&gt;-->
+<!--    <div class="debug-info">-->
+<!--        <h5>🔍 调试信息</h5>-->
+<!--        <p>数据列表是否为空: <strong th:text="${jobs == null} ? '是(null)' : (${jobs.isEmpty()} ? '是(空列表)' : '否')">未知</strong></p>-->
+<!--        <p>数据条数: <strong th:text="${jobs != null} ? ${jobs.size()} : 0">0</strong></p>-->
+<!--        <p>搜索关键词: <strong th:text="${keyword != null} ? ${keyword} : '无'">无</strong></p>-->
+<!--        <p>学生信息: <span th:text="${studentName} + ' - ' + ${studentClass}">未知</span></p>-->
+
+<!--        &lt;!&ndash; 显示详细数据 &ndash;&gt;-->
+<!--        <div th:if="${jobs != null and !jobs.isEmpty()}">-->
+<!--            <h6>数据详情:</h6>-->
+<!--            <div th:each="job,iter : ${jobs}">-->
+<!--                <small>-->
+<!--                    [#<span th:text="${iter.index}"></span>]-->
+<!--                    ID:<span th:text="${job.id}"></span> |-->
+<!--                    企业:<span th:text="${job.companyName}"></span> |-->
+<!--                    岗位:<span th:text="${job.positionName}"></span> |-->
+<!--                    薪资:<span th:text="${job.salary}"></span>-->
+<!--                </small>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <form action="/jobs" method="get" class="form-inline">
+                <input type="text" name="keyword" th:value="${keyword}" placeholder="搜索企业/岗位/地点" class="form-control mr-2">
+                <button type="submit" class="btn btn-success">搜索</button>
+            </form>
+        </div>
+        <div class="col-md-6 text-right">
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addJobModal">
+                添加岗位
+            </button>
+            <!-- 测试按钮 -->
+            <a href="/jobs/test" class="btn btn-info ml-2">测试页面</a>
+        </div>
+    </div>
+    
+    <!-- 多条件查询表单 -->
+    <div class="row mb-3">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-secondary text-white">
+                    多条件筛选
+                </div>
+                <div class="card-body">
+                    <form action="/jobs" method="get" class="form-row">
+                        <div class="form-group col-md-4">
+                            <label for="positionName">岗位名称</label>
+                            <select class="form-control" id="positionName" name="positionName">
+                                <option value="">全部岗位</option>
+                                <option th:selected="${positionName == 'Java开发工程师'}" value="Java开发工程师">Java开发工程师</option>
+                                <option th:selected="${positionName == '前端开发工程师'}" value="前端开发工程师">前端开发工程师</option>
+                                <option th:selected="${positionName == '测试工程师'}" value="测试工程师">测试工程师</option>
+                                <option th:selected="${positionName == '产品经理'}" value="产品经理">产品经理</option>
+                                <option th:selected="${positionName == '网络工程师'}" value="网络工程师">网络工程师</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="salary">薪资</label>
+                            <select class="form-control" id="salary" name="salary">
+                                <option value="">全部薪资</option>
+                                <option th:selected="${salary == '18K-25K'}" value="18K-25K">18K-25K</option>
+                                <option th:selected="${salary == '20K-30K'}" value="20K-30K">20K-30K</option>
+                                <option th:selected="${salary == '25K-35K'}" value="25K-35K">25K-35K</option>
+                                <option th:selected="${salary == '25K-40K'}" value="25K-40K">25K-40K</option>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="location">工作地点</label>
+                            <select class="form-control" id="location" name="location">
+                                <option value="">全部地点</option>
+                                <option th:selected="${location == '杭州'}" value="杭州">杭州</option>
+                                <option th:selected="${location == '深圳'}" value="深圳">深圳</option>
+                                <option th:selected="${location == '北京'}" value="北京">北京</option>
+                            </select>
+                        </div>
+                        <div class="col-md-12 text-right">
+                            <button type="submit" class="btn btn-primary">筛选</button>
+                            <a href="/jobs" class="btn btn-secondary ml-2">清除筛选</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 显示数据表格 -->
+    <div th:if="${jobs != null and !jobs.isEmpty()}">
+        <table id="jobsTable" class="table table-striped table-bordered">
+            <thead class="thead-dark">
+            <tr>
+                <th>ID</th>
+                <th>企业名称</th>
+                <th>岗位名称</th>
+                <th>薪资</th>
+                <th>工作地点</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="job : ${jobs}">
+                <td th:text="${job.id}">ID</td>
+                <td th:text="${job.companyName}">企业名称</td>
+                <td th:text="${job.positionName}">岗位名称</td>
+                <td th:text="${job.salary}">薪资</td>
+                <td th:text="${job.location}">工作地点</td>
+                <td>
+                    <button type="button" class="btn btn-warning btn-sm mr-1" data-toggle="modal"
+                            data-target="#editJobModal" th:data-id="${job.id}" onclick="fillEditForm(this)">
+                        编辑
+                    </button>
+                    <a th:href="@{/jobs/delete/{id}(id=${job.id})}" class="btn btn-danger btn-sm"
+                       onclick="return confirm('确定要删除该岗位吗？')">删除</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- 无数据时显示 -->
+    <div th:if="${jobs == null or jobs.isEmpty()}" class="alert alert-warning">
+        ⚠️ 暂无岗位信息 -
+        <span th:if="${jobs == null}">数据列表为 null</span>
+        <span th:if="${jobs != null and jobs.isEmpty()}">数据列表为空数组</span>
+    </div>
+</div>
+
+<div class="footer">
+    <p>&copy; 2025 IT岗位求职记录系统</p>
+</div>
+
+<!-- 添加岗位的模态框 -->
+<div class="modal fade" id="addJobModal" tabindex="-1" role="dialog" aria-labelledby="addJobModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addJobModalLabel">添加岗位信息</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="addJobForm" action="/jobs/add" method="post">
+                    <div class="form-group">
+                        <label for="companyName">企业名称 *</label>
+                        <input type="text" class="form-control" id="companyName" name="companyName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="positionName">岗位名称 *</label>
+                        <input type="text" class="form-control" id="positionName" name="positionName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="salary">薪资 *</label>
+                        <input type="text" class="form-control" id="salary" name="salary" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="location">工作地点 *</label>
+                        <input type="text" class="form-control" id="location" name="location" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="requirements">具体要求</label>
+                        <textarea class="form-control" id="requirements" name="requirements" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="contactInfo">联系方式</label>
+                        <input type="text" class="form-control" id="contactInfo" name="contactInfo">
+                    </div>
+                    <div class="form-group">
+                        <label for="note">备注</label>
+                        <textarea class="form-control" id="note" name="note" rows="2"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" onclick="document.getElementById('addJobForm').submit()">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 编辑岗位的模态框 -->
+<div class="modal fade" id="editJobModal" tabindex="-1" role="dialog" aria-labelledby="editJobModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editJobModalLabel">编辑岗位信息</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editJobForm" action="/jobs/edit" method="post">
+                    <input type="hidden" id="editId" name="id">
+                    <div class="form-group">
+                        <label for="editCompanyName">企业名称 *</label>
+                        <input type="text" class="form-control" id="editCompanyName" name="companyName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editPositionName">岗位名称 *</label>
+                        <input type="text" class="form-control" id="editPositionName" name="positionName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editSalary">薪资 *</label>
+                        <input type="text" class="form-control" id="editSalary" name="salary" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editLocation">工作地点 *</label>
+                        <input type="text" class="form-control" id="editLocation" name="location" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editRequirements">具体要求</label>
+                        <textarea class="form-control" id="editRequirements" name="requirements" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="editContactInfo">联系方式</label>
+                        <input type="text" class="form-control" id="editContactInfo" name="contactInfo">
+                    </div>
+                    <div class="form-group">
+                        <label for="editNote">备注</label>
+                        <textarea class="form-control" id="editNote" name="note" rows="2"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" onclick="document.getElementById('editJobForm').submit()">更新</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // 填充编辑表单
+    function fillEditForm(button) {
+        const jobId = $(button).data('id');
+        console.log('Editing job ID:', jobId);
+
+        // 使用AJAX获取岗位的完整信息
+        $.ajax({
+            url: '/jobs/view-json/' + jobId,
+            type: 'GET',
+            dataType: 'json',
+            success: function(job) {
+                if (job) {
+                    $('#editId').val(job.id);
+                    $('#editCompanyName').val(job.companyName || '');
+                    $('#editPositionName').val(job.positionName || '');
+                    $('#editSalary').val(job.salary || '');
+                    $('#editLocation').val(job.location || '');
+                    $('#editRequirements').val(job.requirements || '');
+                    $('#editContactInfo').val(job.contactInfo || '');
+                    $('#editNote').val(job.note || '');
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error('Error fetching job details:', error);
+                alert('获取岗位信息失败，请稍后重试');
+                $('#editJobModal').modal('hide');
+            }
+        });
+    }
+
+    // 模态框关闭时重置表单
+    $('#addJobModal').on('hidden.bs.modal', function () {
+        document.getElementById('addJobForm').reset();
+    });
+
+    $('#editJobModal').on('hidden.bs.modal', function () {
+        document.getElementById('editJobForm').reset();
+    });
+
+    // 页面加载完成后的调试
+    $(document).ready(function() {
+        console.log('页面加载完成');
+    });
+</script>
+</body>
+</html>
